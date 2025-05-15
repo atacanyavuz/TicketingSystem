@@ -24,6 +24,7 @@ public class GlobalExceptionHandler {
         response.setMessage(message);
         return response;
     }
+
     private ErrorResponse buildErrorResponse(HttpStatus status, String message, String error) {
         ErrorResponse response = new ErrorResponse();
         response.setStatusCode(status.value());
@@ -42,7 +43,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleUsernameNotFoundException(UsernameNotFoundException e) {
         log.warn("User not found: {}", e.getMessage());
-        ErrorResponse response = buildErrorResponse(HttpStatus.NOT_FOUND,"User not found.",e.getMessage());
+        ErrorResponse response = buildErrorResponse(HttpStatus.NOT_FOUND, "User not found.", e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(TicketNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleTicketNotFoundException(TicketNotFoundException e) {
+        log.warn("TicketNotFoundException handled: {}", e.getMessage());
+        ErrorResponse response = buildErrorResponse(HttpStatus.NOT_FOUND, "Ticket not found.", e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
@@ -82,7 +90,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneralException(Exception e) {
         log.error("Unexpected error handled", e);
-        ErrorResponse response = buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,UNEXPECTED_ERROR_MESSAGE, e.getMessage());
+        ErrorResponse response = buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, UNEXPECTED_ERROR_MESSAGE, e.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 }

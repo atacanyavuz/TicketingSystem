@@ -1,6 +1,5 @@
 package com.atacanyavuz.ticketing.entity;
 
-import com.atacanyavuz.ticketing.enums.TicketStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,25 +10,24 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "tickets")
-public class Ticket {
+@Builder
+@Table(name = "ticket_replies")
+public class TicketReply {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String title;
-    private String description;
+
+    private String message;
+
     private LocalDateTime createdAt;
 
-    @Enumerated(EnumType.STRING)
-    private TicketStatus status;
-
-    @OneToOne(mappedBy = "ticket", cascade = CascadeType.ALL)
-    private TicketReply reply;
+    @OneToOne
+    @JoinColumn(name = "ticket_id", nullable = false, unique = true)
+    private Ticket ticket;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private User responder;
 }
