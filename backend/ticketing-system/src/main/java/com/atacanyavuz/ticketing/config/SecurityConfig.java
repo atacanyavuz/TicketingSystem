@@ -2,7 +2,6 @@ package com.atacanyavuz.ticketing.config;
 
 import com.atacanyavuz.ticketing.repository.UserRepository;
 import com.atacanyavuz.ticketing.security.JwtAuthFilter;
-import com.atacanyavuz.ticketing.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
