@@ -38,15 +38,18 @@ public class TicketReplyService {
         Ticket ticket = ticketRepository.findById(request.getTicketId())
                 .orElseThrow(() -> new TicketNotFoundException("Ticket not found with id: " + request.getTicketId()));
 
+        LocalDateTime now = LocalDateTime.now();
+        ticket.setUpdatedAt(now);
+        ticketRepository.save(ticket);
+
         TicketReply reply;
         if (ticket.getReply() != null) {
             reply = ticket.getReply();
             reply.setMessage(request.getMessage());
-            reply.setCreatedAt(LocalDateTime.now());
+            reply.setCreatedAt(now);
             reply.setResponder(responder);
 
             log.info("Reply updated for ticket {} by {}", ticket.getId(), responder.getEmail());
-
             TicketReply savedReply = ticketReplyRepository.save(reply);
             return CreateTicketReplyResponse.builder()
                     .statusCode(HttpStatus.OK.value())
@@ -57,13 +60,12 @@ public class TicketReplyService {
         else {
             reply = TicketReply.builder()
                     .message(request.getMessage())
-                    .createdAt(LocalDateTime.now())
+                    .createdAt(now)
                     .ticket(ticket)
                     .responder(responder)
                     .build();
 
             log.info("Reply created for ticket {} by {}", ticket.getId(), responder.getEmail());
-
             TicketReply savedReply = ticketReplyRepository.save(reply);
             return CreateTicketReplyResponse.builder()
                     .statusCode(HttpStatus.CREATED.value())

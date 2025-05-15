@@ -22,6 +22,7 @@ public class Ticket {
     private String title;
     private String description;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     @Enumerated(EnumType.STRING)
     private TicketStatus status;

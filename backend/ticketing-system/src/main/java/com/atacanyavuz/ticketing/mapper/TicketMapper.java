@@ -15,6 +15,7 @@ public class TicketMapper {
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .status(TicketStatus.OPEN)
                 .user(user)
                 .build();
@@ -26,6 +27,7 @@ public class TicketMapper {
                 .title(ticket.getTitle())
                 .description(ticket.getDescription())
                 .createdAt(ticket.getCreatedAt())
+                .updatedAt(ticket.getUpdatedAt())
                 .status(ticket.getStatus())
                 .user(UserSummaryResponse.builder()
                         .id(ticket.getUser().getId())

@@ -52,7 +52,7 @@ public class TicketService {
     public TicketListResponse getMyTickets(int page, int size) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("updatedAt").descending());
         Page<Ticket> ticketPage = ticketRepository.findAllByUserEmail(email, pageable);
 
         List<TicketResponse> ticketDTOs = ticketPage.getContent().stream()

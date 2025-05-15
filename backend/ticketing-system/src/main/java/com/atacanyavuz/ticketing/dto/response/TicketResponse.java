@@ -13,6 +13,7 @@ public class TicketResponse{
     private String title;
     private String description;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     private TicketStatus status;
     private UserSummaryResponse user;
     private TicketReplyResponse reply;
