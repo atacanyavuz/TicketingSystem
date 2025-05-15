@@ -1,11 +1,14 @@
 package com.atacanyavuz.ticketing.service;
 
 import com.atacanyavuz.ticketing.dto.request.CreateTicketRequest;
+import com.atacanyavuz.ticketing.dto.request.TicketQueryRequest;
+import com.atacanyavuz.ticketing.dto.request.UpdateTicketStatusRequest;
 import com.atacanyavuz.ticketing.dto.response.*;
 import com.atacanyavuz.ticketing.entity.Ticket;
 import com.atacanyavuz.ticketing.entity.TicketReply;
 import com.atacanyavuz.ticketing.entity.User;
 import com.atacanyavuz.ticketing.enums.TicketStatus;
+import com.atacanyavuz.ticketing.exception.TicketNotFoundException;
 import com.atacanyavuz.ticketing.mapper.TicketMapper;
 import com.atacanyavuz.ticketing.repository.TicketRepository;
 import com.atacanyavuz.ticketing.repository.UserRepository;
@@ -67,6 +70,48 @@ public class TicketService {
                 .pageSize(ticketPage.getSize())
                 .totalElements(ticketPage.getTotalElements())
                 .totalPages(ticketPage.getTotalPages())
+                .build();
+    }
+
+    public TicketListResponse getAllTicketsAsAdmin(TicketQueryRequest request) {
+        Pageable pageable = PageRequest.of(request.getPage(), request.getSize(), Sort.by("updatedAt").descending());
+
+        Page<Ticket> ticketPage;
+        if (request.getStatus() != null) {
+            ticketPage = ticketRepository.findAllByStatus(request.getStatus(), pageable);
+        } else {
+            ticketPage = ticketRepository.findAll(pageable);
+        }
+
+        List<TicketResponse> ticketDTOs = ticketPage.getContent().stream()
+                .map(TicketMapper::toResponse)
+                .toList();
+
+        return TicketListResponse.builder()
+                .statusCode(HttpStatus.OK.value())
+                .message("Tickets fetched successfully")
+                .tickets(ticketDTOs)
+                .pageNumber(ticketPage.getNumber())
+                .pageSize(ticketPage.getSize())
+                .totalElements(ticketPage.getTotalElements())
+                .totalPages(ticketPage.getTotalPages())
+                .build();
+    }
+
+
+    public UpdateTicketStatusResponse updateTicketStatus(UpdateTicketStatusRequest request) {
+        Ticket ticket = ticketRepository.findById(request.getTicketId())
+                .orElseThrow(() -> new TicketNotFoundException("Ticket not found with id: " + request.getTicketId()));
+
+        ticket.setStatus(request.getStatus());
+        ticket.setUpdatedAt(LocalDateTime.now());
+        ticketRepository.save(ticket);
+
+        log.info("Ticket status updated by admin: id={}, newStatus={}", ticket.getId(), ticket.getStatus());
+
+        return UpdateTicketStatusResponse.builder()
+                .statusCode(HttpStatus.OK.value())
+                .message("Ticket status updated successfully")
                 .build();
     }
 }
