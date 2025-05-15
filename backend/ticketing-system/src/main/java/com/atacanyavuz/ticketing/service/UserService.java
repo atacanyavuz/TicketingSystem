@@ -1,12 +1,14 @@
 package com.atacanyavuz.ticketing.service;
 
-import com.atacanyavuz.ticketing.common.constants.StatusCodes;
 import com.atacanyavuz.ticketing.dto.request.RegisterRequest;
 import com.atacanyavuz.ticketing.dto.response.RegisterResponse;
 import com.atacanyavuz.ticketing.entity.User;
+import com.atacanyavuz.ticketing.exception.EmailAlreadyExistsException;
+import com.atacanyavuz.ticketing.exception.UserSaveFailedException;
 import com.atacanyavuz.ticketing.mapper.UserMapper;
 import com.atacanyavuz.ticketing.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +36,7 @@ public class UserService {
         Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
         if (existingUser.isPresent()) {
             log.warn("User registration failed: Email {} already in use", user.getEmail());
-            throw new IllegalArgumentException("Email is already in use.");
+            throw new EmailAlreadyExistsException("Email is already in use.");
         }
 
         user.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -42,12 +44,12 @@ public class UserService {
 
         if (userRes.getId() == null) {
             log.error("User could not be saved. Due to: User Response ID is null");
-            throw new RuntimeException("User could not be saved.");
+            throw new UserSaveFailedException("User could not be saved.");
         }
 
         log.info("New user registered: {}", user.getEmail());
         response.setMessage("User Saved Successfully");
-        response.setStatusCode(StatusCodes.OK);
+        response.setStatusCode(HttpStatus.OK.value());
 
         return response;
     }
