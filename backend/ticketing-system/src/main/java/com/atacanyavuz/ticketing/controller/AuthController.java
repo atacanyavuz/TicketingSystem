@@ -1,6 +1,8 @@
 package com.atacanyavuz.ticketing.controller;
 
+import com.atacanyavuz.ticketing.dto.request.LoginRequest;
 import com.atacanyavuz.ticketing.dto.request.RegisterRequest;
+import com.atacanyavuz.ticketing.dto.response.LoginResponse;
 import com.atacanyavuz.ticketing.dto.response.RegisterResponse;
 import com.atacanyavuz.ticketing.security.JWTUtils;
 import com.atacanyavuz.ticketing.service.UserService;
@@ -28,5 +30,10 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterRequest request) {
         return ResponseEntity.ok(userService.register(request));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+        return ResponseEntity.ok(userService.login(request));
     }
 }

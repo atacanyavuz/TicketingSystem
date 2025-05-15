@@ -4,6 +4,7 @@ import com.atacanyavuz.ticketing.dto.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -29,6 +30,13 @@ public class GlobalExceptionHandler {
         return response;
     }
 
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleBadCredentials(BadCredentialsException e) {
+        log.warn("Authentication failed: {}", e.getMessage());
+        ErrorResponse response = buildErrorResponse(HttpStatus.UNAUTHORIZED, "Authentication failed", e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException e) {
         String errorMessage = e.getBindingResult().getFieldErrors()
@@ -43,14 +51,14 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(EmailAlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> handleEmailAlreadyExists(EmailAlreadyExistsException e) {
-        log.error("EmailAlreadyExists error handled", e);
+        log.warn("EmailAlreadyExists error handled", e);
         ErrorResponse response = buildErrorResponse(HttpStatus.CONFLICT, e.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
     @ExceptionHandler(UserSaveFailedException.class)
     public ResponseEntity<ErrorResponse> handleUserSaveFailed(UserSaveFailedException e) {
-        log.error("UserSaveFailed error handled", e);
+        log.warn("UserSaveFailed error handled", e);
         ErrorResponse response = buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
 
