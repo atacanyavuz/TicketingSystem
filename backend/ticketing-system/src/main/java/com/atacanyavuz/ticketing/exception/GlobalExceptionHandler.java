@@ -4,7 +4,9 @@ import com.atacanyavuz.ticketing.dto.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -30,6 +32,20 @@ public class GlobalExceptionHandler {
         return response;
     }
 
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException e) {
+        log.warn("Access denied: {}", e.getMessage());
+        ErrorResponse response = buildErrorResponse(HttpStatus.FORBIDDEN, "You are not authorized to access this resource.", e.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUsernameNotFoundException(UsernameNotFoundException e) {
+        log.warn("User not found: {}", e.getMessage());
+        ErrorResponse response = buildErrorResponse(HttpStatus.NOT_FOUND,"User not found.",e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleBadCredentials(BadCredentialsException e) {
         log.warn("Authentication failed: {}", e.getMessage());
@@ -43,7 +59,6 @@ public class GlobalExceptionHandler {
                 .stream()
                 .map(error -> error.getField() + ": " + error.getDefaultMessage())
                 .collect(Collectors.joining(", "));
-
         log.warn("Validation error handled: {}", errorMessage);
         ErrorResponse response = buildErrorResponse(HttpStatus.BAD_REQUEST, "Validation failed", errorMessage);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
