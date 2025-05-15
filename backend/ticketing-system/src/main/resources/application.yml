@@ -5,7 +5,7 @@ spring:
   application:
     name: Ticketing System
   datasource:
-    url: jdbc:postgresql://postgres:5432/ticketing_db
+    url: jdbc:postgresql://localhost:5432/ticketing_db
     username: atacanyavuz
     password: pass
     driver-class-name: org.postgresql.Driver
