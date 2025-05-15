@@ -2,14 +2,14 @@ package com.atacanyavuz.ticketing.mapper;
 
 import com.atacanyavuz.ticketing.dto.request.RegisterRequest;
 import com.atacanyavuz.ticketing.entity.User;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
 
-@Mapper(componentModel = "spring")
-public interface UserMapper {
-    UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
-
-    @Mapping(target = "id", ignore = true)
-    User registerRequestToUser(RegisterRequest dto);
+public class UserMapper {
+    public static User registerRequestToUser(RegisterRequest request) {
+        return User.builder()
+                .username(request.getUsername())
+                .email(request.getEmail())
+                .password(request.getPassword())
+                .role(request.getRole())
+                .build();
+    }
 }

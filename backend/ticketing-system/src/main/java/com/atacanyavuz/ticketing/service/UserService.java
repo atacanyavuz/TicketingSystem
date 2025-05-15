@@ -17,12 +17,10 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final UserMapper userMapper;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserMapper userMapper) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.userMapper = userMapper;
     }
 
     public Optional<User> findByEmail(String email) {
@@ -31,7 +29,7 @@ public class UserService {
 
     public RegisterResponse register(RegisterRequest request) {
         RegisterResponse response = new RegisterResponse();
-        User user = userMapper.registerRequestToUser(request);
+        User user = UserMapper.registerRequestToUser(request);
 
         Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
         if (existingUser.isPresent()) {

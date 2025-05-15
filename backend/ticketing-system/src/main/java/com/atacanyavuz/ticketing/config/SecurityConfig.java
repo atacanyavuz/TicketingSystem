@@ -1,11 +1,14 @@
 package com.atacanyavuz.ticketing.config;
 
+import com.atacanyavuz.ticketing.repository.UserRepository;
 import com.atacanyavuz.ticketing.security.JwtAuthFilter;
 import com.atacanyavuz.ticketing.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -20,11 +23,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
     private final JwtAuthFilter jwtFilter;
-    private final UserService userService;
+    private final UserRepository userRepository;
 
-    public SecurityConfig(JwtAuthFilter jwtFilter, com.atacanyavuz.ticketing.service.UserService userService) {
+    public SecurityConfig(JwtAuthFilter jwtFilter, UserRepository userRepository) {
         this.jwtFilter = jwtFilter;
-        this.userService = userService;
+        this.userRepository = userRepository;
     }
 
     @Bean
@@ -45,7 +48,7 @@ public class SecurityConfig {
     @Bean
     public DaoAuthenticationProvider authProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(email -> userService
+        provider.setUserDetailsService(email -> userRepository
                 .findByEmail(email)
                 .orElseThrow(() -> new BadCredentialsException("Invalid credentials")));
         provider.setPasswordEncoder(passwordEncoder());
@@ -55,5 +58,10 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
     }
 }
