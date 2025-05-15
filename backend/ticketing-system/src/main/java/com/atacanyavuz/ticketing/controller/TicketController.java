@@ -4,7 +4,6 @@ import com.atacanyavuz.ticketing.dto.request.CreateTicketRequest;
 import com.atacanyavuz.ticketing.dto.response.CreateTicketResponse;
 import com.atacanyavuz.ticketing.service.TicketService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;

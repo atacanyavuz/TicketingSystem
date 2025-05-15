@@ -66,7 +66,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(EmailAlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> handleEmailAlreadyExists(EmailAlreadyExistsException e) {
-        log.warn("EmailAlreadyExists error handled", e);
+        log.warn("EmailAlreadyExists error handled: {}", e.getMessage());
         ErrorResponse response = buildErrorResponse(HttpStatus.CONFLICT, e.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }

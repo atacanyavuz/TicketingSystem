@@ -5,6 +5,7 @@ import com.atacanyavuz.ticketing.dto.response.CreateTicketResponse;
 import com.atacanyavuz.ticketing.entity.Ticket;
 import com.atacanyavuz.ticketing.entity.User;
 import com.atacanyavuz.ticketing.enums.TicketStatus;
+import com.atacanyavuz.ticketing.mapper.TicketMapper;
 import com.atacanyavuz.ticketing.repository.TicketRepository;
 import com.atacanyavuz.ticketing.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -30,14 +31,7 @@ public class TicketService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
-        Ticket ticket = Ticket.builder()
-                .title(request.getTitle())
-                .description(request.getDescription())
-                .createdAt(LocalDateTime.now())
-                .status(TicketStatus.OPEN)
-                .user(user)
-                .build();
-
+        Ticket ticket = TicketMapper.toTicket(request, user);
         Ticket savedTicket = ticketRepository.save(ticket);
 
         log.info("Ticket created: id={}, user={}", savedTicket.getId(), user.getEmail());
