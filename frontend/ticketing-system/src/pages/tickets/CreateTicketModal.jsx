@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch } from "react-redux";
 import { createTicket } from "../../features/tickets/ticketActions";
 import {
@@ -8,6 +8,8 @@ import {
   TextField,
   Button,
 } from "@mui/material";
+import { Formik, Form, useField } from "formik";
+import * as Yup from "yup";
 
 const style = {
   position: "absolute",
@@ -20,33 +22,30 @@ const style = {
   borderRadius: 2,
 };
 
+const FormikTextField = ({ name, ...props }) => {
+  const [field, meta] = useField(name);
+  return (
+    <TextField
+      {...field}
+      {...props}
+      error={meta.touched && Boolean(meta.error)}
+      helperText={meta.touched && meta.error}
+    />
+  );
+};
+
+const ticketSchema = Yup.object().shape({
+  title: Yup.string()
+    .required("Title is required")
+    .min(5, "Must be at least 5 characters")
+    .max(100, "Max 100 characters"),
+  description: Yup.string()
+    .required("Description is required")
+    .min(10, "Must be at least 10 characters"),
+});
+
 const CreateTicketModal = ({ open, onClose, onSuccess }) => {
   const dispatch = useDispatch();
-
-  const [form, setForm] = useState({ title: "", description: "" });
-  const [submitting, setSubmitting] = useState(false);
-  
-
-  const handleChange = (e) => {
-    setForm((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-  };
-
-  const handleSubmit = async () => {
-    try {
-      setSubmitting(true);
-      await dispatch(createTicket(form)).unwrap();
-      setForm({ title: "", description: "" });
-      onSuccess?.();
-      onClose();
-    } catch (err) {
-      console.error("Ticket creation failed:", err);
-    } finally {
-      setSubmitting(false);
-    }
-  };
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -55,37 +54,53 @@ const CreateTicketModal = ({ open, onClose, onSuccess }) => {
           Create New Ticket
         </Typography>
 
-        <TextField
-          name="title"
-          label="Title"
-          value={form.title}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-          required
-        />
-        <TextField
-          name="description"
-          label="Description"
-          value={form.description}
-          onChange={handleChange}
-          fullWidth
-          multiline
-          rows={4}
-          margin="normal"
-          required
-        />
+        <Formik
+          initialValues={{ title: "", description: "" }}
+          validationSchema={ticketSchema}
+          onSubmit={(values, { setSubmitting, resetForm }) => {
+            dispatch(createTicket(values))
+              .unwrap()
+              .then(() => {
+                resetForm();
+                onSuccess?.();
+                onClose();
+              })
+              .catch((err) => {
+                console.error("Ticket creation failed:", err);
+              })
+              .finally(() => setSubmitting(false));
+          }}
+        >
+          {({ isSubmitting, isValid, dirty }) => (
+            <Form>
+              <FormikTextField
+                name="title"
+                label="Title"
+                fullWidth
+                margin="normal"
+              />
+              <FormikTextField
+                name="description"
+                label="Description"
+                multiline
+                rows={4}
+                fullWidth
+                margin="normal"
+              />
 
-        <Box mt={2} display="flex" justifyContent="flex-end" gap={1}>
-          <Button onClick={onClose}>Cancel</Button>
-          <Button
-            variant="contained"
-            onClick={handleSubmit}
-            disabled={!form.title || !form.description || submitting}
-          >
-            Submit
-          </Button>
-        </Box>
+              <Box mt={2} display="flex" justifyContent="flex-end" gap={1}>
+                <Button onClick={onClose}>Cancel</Button>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  disabled={!dirty || !isValid || isSubmitting}
+                >
+                  Submit
+                </Button>
+              </Box>
+            </Form>
+          )}
+        </Formik>
       </Box>
     </Modal>
   );
