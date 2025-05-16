@@ -21,22 +21,21 @@ const TicketList = () => {
   const dispatch = useDispatch();
 
   const { tickets, loading, error, pageNumber, totalPages } = useSelector((state) => state.tickets);
-
-
-  useEffect(() => {
-  dispatch(getTickets({ page: 0, size: 5 })); 
-  }, [dispatch]);
-  
   const user = useSelector((state) => state.auth.user);
   const isAdmin = user?.role === "ADMIN";
 
+  const [filter, setFilter] = useState("ALL");
+  useEffect(() => { 
+    dispatch(getTickets({ page: 0, size: 5, status: filter }));
+  }, [dispatch, isAdmin, filter]);
+  
   return (
     <Box p={3}>
       <Typography variant="h4" gutterBottom>
         Ticket List
       </Typography>
 
-      {/* {isAdmin && (
+      {isAdmin && (
         <ButtonGroup sx={{ mb: 2 }}>
           {["ALL", "OPEN", "ANSWERED", "CLOSED"].map((status) => (
             <Button
@@ -44,11 +43,11 @@ const TicketList = () => {
               variant={filter === status ? "contained" : "outlined"}
               onClick={() => setFilter(status)}
             >
-              {status.replace("_", " ")}
+              {status}
             </Button>
           ))}
         </ButtonGroup>
-      )} */}
+      )}
 
       {loading ? (
         <CircularProgress />

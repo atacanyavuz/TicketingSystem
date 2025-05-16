@@ -3,19 +3,29 @@ import axios from "axios";
 
 export const getTickets = createAsyncThunk(
   "tickets/getTickets",
-  async ({ page = 0, size = 5 }, {getState, rejectWithValue }) => {
+  async ({ page = 0, size = 5, status = "ALL" }, { getState, rejectWithValue }) => {
     try {
-      const token = getState().auth.user?.accessToken;
-      const response = await axios.get("/api/tickets", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        params: { page, size },
-      });
+      const { accessToken, role } = getState().auth.user;
+
+      let response;
+
+      if (role === "ADMIN") {
+        const body = { page, size };
+        if (status !== "ALL") body.status = status;
+
+        response = await axios.post("/api/tickets/all", body, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+      } else {
+        response = await axios.get("/api/tickets", {
+          headers: { Authorization: `Bearer ${accessToken}` },
+          params: { page, size },
+        });
+      }
+
       return response.data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || "Failed to fetch tickets");
     }
   }
-
 );
