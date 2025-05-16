@@ -5,6 +5,7 @@ import com.atacanyavuz.ticketing.dto.response.CreateTicketReplyResponse;
 import com.atacanyavuz.ticketing.entity.Ticket;
 import com.atacanyavuz.ticketing.entity.TicketReply;
 import com.atacanyavuz.ticketing.entity.User;
+import com.atacanyavuz.ticketing.enums.TicketStatus;
 import com.atacanyavuz.ticketing.exception.TicketNotFoundException;
 import com.atacanyavuz.ticketing.repository.TicketReplyRepository;
 import com.atacanyavuz.ticketing.repository.TicketRepository;
@@ -40,6 +41,7 @@ public class TicketReplyService {
 
         LocalDateTime now = LocalDateTime.now();
         ticket.setUpdatedAt(now);
+        ticket.setStatus(TicketStatus.ANSWERED);
         ticketRepository.save(ticket);
 
         TicketReply reply;
