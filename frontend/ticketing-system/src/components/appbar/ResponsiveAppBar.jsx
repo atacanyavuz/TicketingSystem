@@ -1,18 +1,26 @@
-import * as React from 'react';
 import AppBarContainer from './AppBarContainer';
+import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../../features/auth/authSlice";
 import LogoTitle from './LogoTitle';
 import NavMenu from './NavMenu';
 import UserMenu from './UserMenu';
+import LoginButton from '../loginButton/loginButton';
 
 const pages = ['Tickets'];
-const settings = ['Profile', 'Logout'];
 
 function ResponsiveAppBar() {
+  const user = useSelector((state) => state.auth.user);
+
   return (
     <AppBarContainer>
       <LogoTitle />
-      <NavMenu pages={pages} />
-      <UserMenu settings={settings} />
+      {user ? (
+        <NavMenu pages={pages} />
+      ) : null}
+      {user ? (
+        <UserMenu sx={{ ml: "auto" }}/>
+      ) : <LoginButton/>}      
     </AppBarContainer>
   );
 }

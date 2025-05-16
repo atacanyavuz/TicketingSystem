@@ -80,6 +80,9 @@ public class UserService {
 
         return LoginResponse.builder()
                 .accessToken(accessToken)
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .role(user.getRole())
                 .message("Login Successful")
                 .statusCode(HttpStatus.OK.value())
                 .build();

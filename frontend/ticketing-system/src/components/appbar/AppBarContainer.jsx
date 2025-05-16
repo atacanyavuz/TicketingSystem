@@ -4,7 +4,7 @@ const AppBarContainer = ({ children }) => {
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
-        <Toolbar disableGutters>{children}</Toolbar>
+        <Toolbar disableGutters sx={{ maxHeight: 50 }} >{children}</Toolbar>
       </Container>
     </AppBar>
   );
