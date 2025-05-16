@@ -19,18 +19,16 @@ import { getTickets } from "../../features/tickets/ticketActions";
 
 const TicketList = () => {
   const dispatch = useDispatch();
+
   const { tickets, loading, error, pageNumber, totalPages } = useSelector((state) => state.tickets);
 
-  const [filter, setFilter] = useState("ALL");
 
-useEffect(() => {
+  useEffect(() => {
   dispatch(getTickets({ page: 0, size: 5 })); 
-}, [dispatch]);
-
-  const filteredTickets =
-    filter === "ALL"
-      ? tickets
-      : tickets.filter((ticket) => ticket.status === filter);
+  }, [dispatch]);
+  
+  const user = useSelector((state) => state.auth.user);
+  const isAdmin = user?.role === "ADMIN";
 
   return (
     <Box p={3}>
@@ -38,17 +36,19 @@ useEffect(() => {
         Ticket List
       </Typography>
 
-      <ButtonGroup sx={{ mb: 2 }}>
-        {["ALL", "OPEN", "IN_PROGRESS", "CLOSED"].map((status) => (
-          <Button
-            key={status}
-            variant={filter === status ? "contained" : "outlined"}
-            onClick={() => setFilter(status)}
-          >
-            {status.replace("_", " ")}
-          </Button>
-        ))}
-      </ButtonGroup>
+      {/* {isAdmin && (
+        <ButtonGroup sx={{ mb: 2 }}>
+          {["ALL", "OPEN", "ANSWERED", "CLOSED"].map((status) => (
+            <Button
+              key={status}
+              variant={filter === status ? "contained" : "outlined"}
+              onClick={() => setFilter(status)}
+            >
+              {status.replace("_", " ")}
+            </Button>
+          ))}
+        </ButtonGroup>
+      )} */}
 
       {loading ? (
         <CircularProgress />
@@ -67,7 +67,7 @@ useEffect(() => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredTickets.map((ticket) => (
+              {tickets.map((ticket) => (
                 <TableRow key={ticket.id}>
                   <TableCell>{ticket.id}</TableCell>
                   <TableCell>{ticket.title}</TableCell>
