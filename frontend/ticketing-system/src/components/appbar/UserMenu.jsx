@@ -5,7 +5,7 @@ import { logout } from '../../features/auth/authSlice';
 import { useNavigate } from 'react-router-dom';
 
 const UserMenu = () => {
-  const settings = ['Profile', 'Logout'];
+  const settings = ['Logout'];
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
   const dispatch = useDispatch();
@@ -32,7 +32,7 @@ const UserMenu = () => {
     }}>
       <Tooltip title="Open settings">
         <IconButton onClick={handleOpen} sx={{ p: 0 }}>
-          <Avatar alt="User" src="/static/images/avatar/2.jpg" />
+          <Avatar/>
         </IconButton>
       </Tooltip>
       <Menu

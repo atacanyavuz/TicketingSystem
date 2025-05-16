@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/layout/Layout";
 import Home from "./pages/Home";
 import Login from "./pages/auth/LoginPage";
+import Register from "./pages/auth/RegisterPage";
 import TicketList from "./pages/tickets/TicketList";
 
 import { ToastContainer } from "react-toastify";
@@ -16,6 +17,7 @@ function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
             <Route path="/tickets" element={<TicketList />} />
           </Route>
         </Routes>

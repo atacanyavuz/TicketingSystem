@@ -1,9 +1,12 @@
 import React from "react";
 import { Box, Button, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Home = () => {
   const navigate = useNavigate();
+
+  const user = useSelector((state) => state.auth.user);
 
   return (
     <Box
@@ -20,14 +23,16 @@ const Home = () => {
         Welcome to the Ticketing System
       </Typography>
 
-      <Box display="flex" gap={2}>
-        <Button variant="contained" onClick={() => navigate("/login")}>
-          Login
-        </Button>
-        <Button variant="outlined" onClick={() => navigate("/register")}>
-          Register
-        </Button>
-      </Box>
+      {!user && (
+        <Box display="flex" justifyContent="center" gap={2} mt={3}>
+          <Button variant="contained" onClick={() => navigate("/login")}>
+            Login
+          </Button>
+          <Button variant="outlined" onClick={() => navigate("/register")}>
+            Register
+          </Button>
+        </Box>
+      )}
     </Box>
   );
 };

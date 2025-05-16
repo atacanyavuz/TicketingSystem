@@ -26,3 +26,15 @@ export const loginUser = createAsyncThunk( "auth/loginUser",
     }
   }
 );
+
+export const registerUser = createAsyncThunk(
+  "auth/registerUser",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post("/api/auth/register", formData);
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || "Register failed");
+    }
+  }
+);
