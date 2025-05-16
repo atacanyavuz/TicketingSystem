@@ -1,7 +1,5 @@
 import AppBarContainer from './AppBarContainer';
-import { useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { logout } from "../../features/auth/authSlice";
+import { useSelector} from "react-redux";
 import LogoTitle from './LogoTitle';
 import NavMenu from './NavMenu';
 import UserMenu from './UserMenu';
