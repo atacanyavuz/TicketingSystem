@@ -19,7 +19,11 @@ const style = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 550,
+      width: {
+    xs: "90%", 
+    sm: 400,   
+    md: 600,   
+  },
   maxHeight: "80vh",
   overflowY: "auto",
   bgcolor: "background.paper",
