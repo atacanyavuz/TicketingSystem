@@ -6,6 +6,7 @@ import { getTickets, updateTicketStatus } from "../../features/tickets/ticketAct
 
 import ReplyModal from "./ReplyModal";
 import CreateTicketModal from "./CreateTicketModal";
+import { toast } from "react-toastify";
 
 const TicketList = () => {
   const dispatch = useDispatch();
@@ -84,6 +85,7 @@ const TicketList = () => {
                           dispatch(updateTicketStatus({ ticketId: ticket.id, status: newStatus }))
                             .unwrap()
                             .then(() => {
+                              toast.success("Status changed successfully");
                               dispatch(getTickets({ page: pageNumber, size: 5, status: filter }));
                             });
                         }}

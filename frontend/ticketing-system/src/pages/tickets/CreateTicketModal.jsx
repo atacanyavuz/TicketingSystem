@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { Formik, Form, useField } from "formik";
 import * as Yup from "yup";
+import { toast } from "react-toastify";
 
 const style = {
   position: "absolute",
@@ -67,10 +68,12 @@ const CreateTicketModal = ({ open, onClose, onSuccess }) => {
               .then(() => {
                 resetForm();
                 onSuccess?.();
+                toast.success("Ticket creation successfully");
                 onClose();
               })
               .catch((err) => {
                 console.error("Ticket creation failed:", err);
+                toast.error("Ticket creation failed");
               })
               .finally(() => setSubmitting(false));
           }}

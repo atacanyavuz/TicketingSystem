@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify";
 import {
   Modal,
   Box,
@@ -12,7 +13,6 @@ import { replyTicket } from "../../features/tickets/ticketActions";
 
 import { Formik, Form, Field, useField, ErrorMessage } from "formik";
 import * as Yup from "yup";
-
 
 const style = {
   position: "absolute",
@@ -115,6 +115,7 @@ const ReplyModal = ({ open, onClose, ticket, onSuccess }) => {
                     resetForm();
                     onClose();
                     onSuccess?.();
+                    toast.success("Reply created successfully");
                   })
                   .finally(() => setSubmitting(false));
               }}
