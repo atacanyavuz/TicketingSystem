@@ -16,7 +16,9 @@ import {
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { getTickets } from "../../features/tickets/ticketActions";
+
 import ReplyModal from "./ReplyModal";
+import CreateTicketModal from "./CreateTicketModal";
 
 const TicketList = () => {
   const dispatch = useDispatch();
@@ -31,6 +33,7 @@ const TicketList = () => {
   }, [dispatch, isAdmin, filter]);
 
   const [selectedTicket, setSelectedTicket] = useState(null);
+  const [createOpen, setCreateOpen] = useState(false);
 
   
   return (
@@ -38,6 +41,14 @@ const TicketList = () => {
       <Typography variant="h4" gutterBottom>
         Ticket List
       </Typography>
+
+      {!isAdmin && (
+        <Box mb={2}>
+          <Button variant="contained" onClick={() => setCreateOpen(true)}>
+            + Create Ticket
+          </Button>
+        </Box>
+      )}
 
       {isAdmin && (
         <ButtonGroup sx={{ mb: 2 }}>
@@ -122,8 +133,16 @@ const TicketList = () => {
             open={true}
             ticket={selectedTicket}
             onClose={() => setSelectedTicket(null)}
+            onSuccess={() => dispatch(getTickets({ page: 0, size: 5 }))}
           />
         )}
+
+        <CreateTicketModal
+          open={createOpen}
+          onClose={() => setCreateOpen(false)}
+          onSuccess={() => dispatch(getTickets({ page: 0, size: 5 }))}
+        />
+
     </Box>
   );
 };

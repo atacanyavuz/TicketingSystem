@@ -56,3 +56,32 @@ export const replyTicket = createAsyncThunk(
   }
 );
 
+export const createTicket = createAsyncThunk(
+  "tickets/createTicket",
+  async ({ title, description }, { getState, rejectWithValue }) => {
+    try {
+      const { accessToken, role } = getState().auth.user;
+
+      if (role !== "USER") {
+        return rejectWithValue("Only users can create tickets.");
+      }
+
+      const response = await axios.post(
+        "/api/tickets/create",
+        { title, description },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(
+        err.response?.data?.message || "Ticket creation failed"
+      );
+    }
+  }
+);
+

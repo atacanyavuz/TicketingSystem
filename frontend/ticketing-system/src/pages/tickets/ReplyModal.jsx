@@ -23,7 +23,7 @@ const style = {
   borderRadius: 2,
 };
 
-const ReplyModal = ({ open, onClose, ticket }) => {
+const ReplyModal = ({ open, onClose, ticket, onSuccess }) => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
   const isAdmin = user?.role === "ADMIN";
@@ -36,6 +36,7 @@ const ReplyModal = ({ open, onClose, ticket }) => {
       .then(() => {
         setReplyText("");
         onClose();
+        onSuccess?.();
       });
   };
 
