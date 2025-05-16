@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { getTickets } from "../../features/tickets/ticketActions";
+import ReplyModal from "./ReplyModal";
 
 const TicketList = () => {
   const dispatch = useDispatch();
@@ -28,6 +29,9 @@ const TicketList = () => {
   useEffect(() => { 
     dispatch(getTickets({ page: 0, size: 5, status: filter }));
   }, [dispatch, isAdmin, filter]);
+
+  const [selectedTicket, setSelectedTicket] = useState(null);
+
   
   return (
     <Box p={3}>
@@ -63,6 +67,7 @@ const TicketList = () => {
                 <TableCell>Description</TableCell>
                 <TableCell>Status</TableCell>
                 <TableCell>Updated At</TableCell>
+                <TableCell>Info</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -75,6 +80,15 @@ const TicketList = () => {
                   <TableCell>
                     {new Date(ticket.updatedAt).toLocaleString()}
                   </TableCell>
+                  <TableCell>
+                    <Button
+                      size="small"
+                      onClick={() => setSelectedTicket(ticket)}
+                    >
+                      {isAdmin ? "Reply" : "Info"}
+                    </Button>
+                  </TableCell>
+                  
                 </TableRow>
               ))}
             </TableBody>
@@ -102,6 +116,14 @@ const TicketList = () => {
             Next →
         </Button>
         </Box>
+
+        {selectedTicket && (
+          <ReplyModal
+            open={true}
+            ticket={selectedTicket}
+            onClose={() => setSelectedTicket(null)}
+          />
+        )}
     </Box>
   );
 };

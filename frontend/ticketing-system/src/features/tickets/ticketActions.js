@@ -29,3 +29,30 @@ export const getTickets = createAsyncThunk(
     }
   }
 );
+
+export const replyTicket = createAsyncThunk(
+  "tickets/replyTicket",
+  async ({ ticketId, message }, {getState, rejectWithValue }) => {
+    try {
+      const accessToken  = getState().auth.user.accessToken;
+      const response = await axios.post("/api/replies/create",
+        {
+          ticketId,
+          message,
+        }
+        ,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(
+        err.response?.data?.message || "Reply failed"
+      );
+    }
+  }
+);
+
