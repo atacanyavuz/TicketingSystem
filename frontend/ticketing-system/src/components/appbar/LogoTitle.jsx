@@ -1,6 +1,6 @@
 import { Typography, Box } from "@mui/material";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
-import { Link } from "react-router-dom"; // Bu şart!
+import { Link } from "react-router-dom";
 
 const LogoTitle = () => {
   return (

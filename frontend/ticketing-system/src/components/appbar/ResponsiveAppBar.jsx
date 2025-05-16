@@ -5,7 +5,6 @@ import NavMenu from './NavMenu';
 import UserMenu from './UserMenu';
 import LoginButton from '../loginButton/loginButton';
 
-const pages = ['Tickets'];
 
 function ResponsiveAppBar() {
   const user = useSelector((state) => state.auth.user);
@@ -14,7 +13,7 @@ function ResponsiveAppBar() {
     <AppBarContainer>
       <LogoTitle />
       {user ? (
-        <NavMenu pages={pages} />
+        <NavMenu/>
       ) : null}
       {user ? (
         <UserMenu sx={{ ml: "auto" }}/>

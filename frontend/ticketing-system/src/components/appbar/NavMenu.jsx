@@ -1,8 +1,13 @@
 import { Box, IconButton, Menu, MenuItem, Typography, Button } from '@mui/material';
+import { useNavigate } from "react-router-dom";
 import MenuIcon from '@mui/icons-material/Menu';
 import * as React from 'react';
 
-const NavMenu = ({ pages }) => {
+const NavMenu = () => {
+  const pages = [
+    { label: 'Tickets', path: '/tickets' },
+  ];
+  const navigate = useNavigate();
   const [anchorElNav, setAnchorElNav] = React.useState(null);
 
   const handleOpen = (e) => setAnchorElNav(e.currentTarget);
@@ -24,8 +29,8 @@ const NavMenu = ({ pages }) => {
           sx={{ display: { xs: 'block', md: 'none' } }}
         >
           {pages.map((page) => (
-            <MenuItem key={page} onClick={handleClose}>
-              <Typography textAlign="center">{page}</Typography>
+            <MenuItem key={page.label} onClick={() => navigate(page.path)}>
+              <Typography>{page.label}</Typography>
             </MenuItem>
           ))}
         </Menu>
@@ -34,13 +39,11 @@ const NavMenu = ({ pages }) => {
       {/* Desktop */}
       <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
         {pages.map((page) => (
-          <Button
-            key={page}
-            onClick={handleClose}
-            sx={{ my: 2, color: 'white', display: 'block' }}
-          >
-            {page}
-          </Button>
+        <Button key={page.label} onClick={() => navigate(page.path)}
+          sx={{ my: 2, color: 'white', display: 'block' }}
+        > 
+          {page.label}
+        </Button>
         ))}
       </Box>
     </>

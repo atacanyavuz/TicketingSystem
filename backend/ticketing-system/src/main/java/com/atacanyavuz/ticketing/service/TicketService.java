@@ -58,6 +58,7 @@ public class TicketService {
         Pageable pageable = PageRequest.of(page, size, Sort.by("updatedAt").descending());
         Page<Ticket> ticketPage = ticketRepository.findAllByUserEmail(email, pageable);
 
+        log.info("Get My Tickets");
         List<TicketResponse> ticketDTOs = ticketPage.getContent().stream()
                 .map(TicketMapper::toResponse)
                 .toList();
@@ -75,6 +76,8 @@ public class TicketService {
 
     public TicketListResponse getAllTicketsAsAdmin(TicketQueryRequest request) {
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize(), Sort.by("updatedAt").descending());
+
+        log.info("Get All Tickets Admin");
 
         Page<Ticket> ticketPage;
         if (request.getStatus() != null) {
