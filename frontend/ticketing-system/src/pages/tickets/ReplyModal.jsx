@@ -5,10 +5,14 @@ import {
   Typography,
   TextField,
   Button,
-  Divider,
+  Divider
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { replyTicket } from "../../features/tickets/ticketActions";
+
+import { Formik, Form, Field, useField, ErrorMessage } from "formik";
+import * as Yup from "yup";
+
 
 const style = {
   position: "absolute",
@@ -23,22 +27,30 @@ const style = {
   borderRadius: 2,
 };
 
+const FormikTextField = ({ name, ...props }) => {
+  const [field, meta] = useField(name);
+
+  return (
+    <TextField
+      {...field}
+      {...props}
+      error={meta.touched && Boolean(meta.error)}
+      helperText={meta.touched && meta.error}
+    />
+  );
+};
+
+
 const ReplyModal = ({ open, onClose, ticket, onSuccess }) => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
   const isAdmin = user?.role === "ADMIN";
 
-  const [replyText, setReplyText] = useState("");
-
-  const handleSubmit = () => {
-    dispatch(replyTicket({ ticketId: ticket.id, message: replyText }))
-      .unwrap()
-      .then(() => {
-        setReplyText("");
-        onClose();
-        onSuccess?.();
-      });
-  };
+  const replySchema = Yup.object().shape({
+  replyText: Yup.string()
+    .required("Reply message is required")
+    .min(5, "Reply must be at least 5 characters"),
+  });
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -83,31 +95,50 @@ const ReplyModal = ({ open, onClose, ticket, onSuccess }) => {
           </Typography>
         )}
 
-        {/* Sadece admin cevap gönderebilsin */}
         {isAdmin && (
           <>
             <Divider sx={{ my: 2 }} />
             <Typography variant="subtitle1" gutterBottom>
               Send a Reply
             </Typography>
-            <TextField
-              multiline
-              rows={4}
-              fullWidth
-              label="Your Response"
-              value={replyText}
-              onChange={(e) => setReplyText(e.target.value)}
-            />
-            <Box mt={2} display="flex" justifyContent="flex-end" gap={1}>
-              <Button onClick={onClose}>Cancel</Button>
-              <Button
-                variant="contained"
-                disabled={!replyText.trim()}
-                onClick={handleSubmit}
-              >
-                Send
-              </Button>
-            </Box>
+            <Formik
+              initialValues={{ replyText: "" }}
+              validationSchema={replySchema}
+              onSubmit={(values, { setSubmitting, resetForm }) => {
+                dispatch(replyTicket({ ticketId: ticket.id, message: values.replyText }))
+                  .unwrap()
+                  .then(() => {
+                    resetForm();
+                    onClose();
+                    onSuccess?.();
+                  })
+                  .finally(() => setSubmitting(false));
+              }}
+            >
+              {({ isSubmitting, isValid, dirty  }) => (
+                <Form>
+                  <FormikTextField
+                    name="replyText"
+                    label="Your Response"
+                    multiline
+                    rows={4}
+                    fullWidth
+                    margin="normal"
+                  />
+
+                  <Box mt={2} display="flex" justifyContent="flex-end" gap={1}>
+                    <Button onClick={onClose}>Cancel</Button>
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      disabled={!isValid || !dirty || isSubmitting}
+                    >
+                      Send
+                    </Button>
+                  </Box>
+                </Form>
+              )}
+            </Formik>
           </>
         )}
       </Box>
