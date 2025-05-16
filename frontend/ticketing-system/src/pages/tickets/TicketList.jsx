@@ -62,7 +62,7 @@ const TicketList = () => {
                 <TableCell>Title</TableCell>
                 <TableCell>Description</TableCell>
                 <TableCell>Status</TableCell>
-                <TableCell>Created At</TableCell>
+                <TableCell>Updated At</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -73,7 +73,7 @@ const TicketList = () => {
                   <TableCell>{ticket.description}</TableCell>
                   <TableCell>{ticket.status}</TableCell>
                   <TableCell>
-                    {new Date(ticket.createdAt).toLocaleString()}
+                    {new Date(ticket.updatedAt).toLocaleString()}
                   </TableCell>
                 </TableRow>
               ))}
