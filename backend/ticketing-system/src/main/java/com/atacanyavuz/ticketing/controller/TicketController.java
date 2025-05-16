@@ -44,7 +44,7 @@ public class TicketController {
         return ResponseEntity.ok(ticketService.getAllTicketsAsAdmin(request));
     }
 
-    @PostMapping("/update-status")
+    @PutMapping("/update-status")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UpdateTicketStatusResponse> updateTicketStatus(@RequestBody UpdateTicketStatusRequest request) {
         return ResponseEntity.ok(ticketService.updateTicketStatus(request));

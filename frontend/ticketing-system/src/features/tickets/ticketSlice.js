@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getTickets, replyTicket, createTicket } from "./ticketActions";
+import { getTickets, replyTicket, createTicket, updateTicketStatus } from "./ticketActions";
 
 const ticketSlice = createSlice({
   name: "tickets",
@@ -42,6 +42,13 @@ const ticketSlice = createSlice({
         state.error = action.payload;
       })
       .addCase(replyTicket.fulfilled, (state, action) => {
+        const updated = action.payload;
+        const index = state.tickets.findIndex((t) => t.id === updated.id);
+        if (index !== -1) {
+          state.tickets[index] = updated;
+        }
+      })
+      .addCase(updateTicketStatus.fulfilled, (state, action) => {
         const updated = action.payload;
         const index = state.tickets.findIndex((t) => t.id === updated.id);
         if (index !== -1) {

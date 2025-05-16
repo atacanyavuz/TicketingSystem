@@ -1,21 +1,8 @@
 import React, { useEffect, useState } from "react";
 import {
-  Box,
-  Button,
-  ButtonGroup,
-  CircularProgress,
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Alert,
-} from "@mui/material";
+  Box, Button, ButtonGroup, CircularProgress, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Alert, Select, MenuItem} from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { getTickets } from "../../features/tickets/ticketActions";
+import { getTickets, updateTicketStatus } from "../../features/tickets/ticketActions";
 
 import ReplyModal from "./ReplyModal";
 import CreateTicketModal from "./CreateTicketModal";
@@ -87,7 +74,30 @@ const TicketList = () => {
                   <TableCell>{ticket.id}</TableCell>
                   <TableCell>{ticket.title}</TableCell>
                   <TableCell>{ticket.description}</TableCell>
-                  <TableCell>{ticket.status}</TableCell>
+                  <TableCell>
+                    {isAdmin ? (
+                      <Select
+                        size="small"
+                        value={ticket.status}
+                        onChange={(e) =>{
+                          const newStatus = e.target.value;
+                          dispatch(updateTicketStatus({ ticketId: ticket.id, status: newStatus }))
+                            .unwrap()
+                            .then(() => {
+                              dispatch(getTickets({ page: pageNumber, size: 5, status: filter }));
+                            });
+                        }}
+                      >
+                        {["OPEN", "ANSWERED", "CLOSED"].map((status) => (
+                          <MenuItem key={status} value={status}>
+                            {status}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    ) : (
+                      ticket.status
+                    )}
+                  </TableCell>
                   <TableCell>
                     {new Date(ticket.updatedAt).toLocaleString()}
                   </TableCell>

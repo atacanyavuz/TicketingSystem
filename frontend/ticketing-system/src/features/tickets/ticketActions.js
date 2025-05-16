@@ -85,3 +85,31 @@ export const createTicket = createAsyncThunk(
   }
 );
 
+export const updateTicketStatus = createAsyncThunk(
+  "tickets/updateTicketStatus",
+  async ({ ticketId, status }, { getState, rejectWithValue }) => {
+    try {
+      const { accessToken, role } = getState().auth.user;
+
+      if (role !== "ADMIN") {
+        return rejectWithValue("Unauthorized: Only admins can update status.");
+      }
+
+      const response = await axios.put(
+        "/api/tickets/update-status",
+        { ticketId, status },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(
+        err.response?.data?.message || "Failed to update ticket status"
+      );
+    }
+  }
+);
